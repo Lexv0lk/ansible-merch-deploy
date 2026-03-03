@@ -1,0 +1,6 @@
+---
+
+- name: Restart merch-store
+  command: "docker compose --profile {{ compose_profile }} up -d --build"
+  args:
+    chdir: "{{ app_deploy_dir }}"

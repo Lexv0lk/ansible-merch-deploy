@@ -1,0 +1,7 @@
+---
+- name: Deploy merch-store microservices
+  hosts: merch_servers
+  become: true
+
+  roles:
+    - merch-store

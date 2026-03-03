@@ -1,0 +1,77 @@
+---
+
+# STEP 1: Проверить установку Докера
+- name: Check if Docker is installed
+  command: docker --version
+  register: docker_version
+  changed_when: false
+  tags: [check]
+
+- name: Check Docker Compose is installed
+  command: docker compose version
+  register: compose_version
+  changed_when: false
+  tags: [check]
+
+- name: Show Docker version
+  debug:
+    msg: "Docker: {{ docker_version.stdout }}, Docker Compose: {{ compose_version.stdout }}"
+  tags: [check]
+
+# STEP 2: Создать директорию для приложения
+- name: Create deploy directory
+  file:
+    path: "{{ app_deploy_dir }}"
+    state: directory
+    mode: "0755"
+  tags: [deploy]
+
+# STEP 3: Клонировать репозиторий
+- name: Clone or update merch-store repository
+  git:
+    repo: "{{ app_repo_url }}"
+    dest: "{{ app_deploy_dir }}"
+    version: "{{ app_repo_branch }}"
+    force: yes
+  tags: [deploy]
+
+# STEP 4: Сгенерировать .env файл
+- name: Generate .env file from template
+  template:
+    src: env.j2
+    dest: "{{ app_deploy_dir }}/.env"
+    mode: "0600"
+  notify: Restart merch-store
+  tags: [deploy]
+
+# STEP 5: Запустить приложение через Docker Compose
+- name: Build and start services
+  command: "docker compose --profile {{ compose_profile }} up -d --build"
+  args:
+    chdir: "{{ app_deploy_dir }}"
+
+# STEP 6: Проверить, что контейнеры запущены
+- name: Wait for gateway to be healthy
+  uri:
+    url: "http://localhost{{ http_port }}/healthz"
+    method: GET
+    status_code: 200
+  register: health_check
+  retries: 12
+  delay: 5
+  until: health_check.status == 200
+  ignore_errors: true
+  tags: [deploy, check]
+
+- name: Show running containers
+  command: "docker compose --profile {{ compose_profile }} ps"
+  args:
+    chdir: "{{ app_deploy_dir }}"
+  register: compose_ps
+  changed_when: false
+  tags: [deploy, check]
+
+- name: Display container status
+  debug:
+    msg: "{{ compose_ps.stdout_lines }}"
+  tags: [deploy, check]

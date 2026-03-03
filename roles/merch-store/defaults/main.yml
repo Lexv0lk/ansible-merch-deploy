@@ -1,0 +1,33 @@
+---
+
+# Куда клонировать/деплоить проект
+app_deploy_dir: /opt/merch-store
+
+# Git
+app_repo_url: "https://github.com/Lexv0lk/merch-store.git"
+app_repo_branch: main
+
+# Docker compose profile
+compose_profile: app
+
+# Database Auth
+db_auth_user: auth_user
+db_auth_password: auth_secret_password
+db_auth_name: merch_auth_db
+
+# Database Store
+db_store_user: store_user
+db_store_password: store_secret_password
+db_store_name: merch_store_db
+
+# gRPC
+grpc_auth_port: ":9090"
+grpc_store_port: ":9091"
+grpc_auth_host: auth
+grpc_store_host: store
+
+# HTTP Gateway
+http_port: ":8080"
+
+# JWT
+jwt_secret: "change-me-in-production"
