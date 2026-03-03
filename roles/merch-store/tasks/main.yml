@@ -1,24 +1,24 @@
 ---
 
-# STEP 1: Проверить установку Докера
-- name: Check if Docker is installed
-  command: docker --version
-  register: docker_version
-  changed_when: false
-  check_mode: false
-  tags: [check]
-
-- name: Check Docker Compose is installed
-  command: docker compose version
-  register: compose_version
-  changed_when: false
-  check_mode: false
-  tags: [check]
-
-- name: Show Docker version
-  debug:
-    msg: "Docker: {{ docker_version.stdout }}, Docker Compose: {{ compose_version.stdout }}"
-  tags: [check]
+## STEP 1: Проверить установку Докера
+#- name: Check if Docker is installed
+#  command: docker --version
+#  register: docker_version
+#  changed_when: false
+#  check_mode: false
+#  tags: [check]
+#
+#- name: Check Docker Compose is installed
+#  command: docker compose version
+#  register: compose_version
+#  changed_when: false
+#  check_mode: false
+#  tags: [check]
+#
+#- name: Show Docker version
+#  debug:
+#    msg: "Docker: {{ docker_version.stdout }}, Docker Compose: {{ compose_version.stdout }}"
+#  tags: [check]
 
 # STEP 2: Создать директорию для приложения
 - name: Create deploy directory
